@@ -50,7 +50,7 @@ Aggregator defaults are defined in `src/main/resources/application.properties`:
 
 ## Running the aggregator
 
-From the `log-aggregator` directory:
+From the repo directory:
 
 ```bash
 cd log-aggregator
@@ -58,7 +58,7 @@ mvn spring-boot:run
 ```
 
 ## Running the emitter
-From the log-emitter directory:
+From the repo directory:
 ```bash
 cd log-emitter
 mvn exec:java
