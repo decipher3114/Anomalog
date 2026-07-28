@@ -1,13 +1,13 @@
 # Log Aggregator
 
-A Spring Boot log aggregation service that reads a shared `app.log` file, parses incoming entries, tracks log metrics, and detects error spikes in near real time.
+A Spring Boot log aggregation service that reads a shared log file, parses incoming entries, tracks log metrics, and detects error spikes in near real time.
 
 ## What it does
 
 The aggregator is designed to be the central processing service for a companion log emitter.
 
 It:
-- tails the shared `app.log` file
+- tails the shared log file
 - parses each log line into timestamp, level, and message
 - batches new log entries every second
 - tracks total log counts and counts per log level
@@ -17,7 +17,7 @@ It:
 
 ## Companion emitter
 
-The emitter is a simple standalone Java app that writes synthetic log lines into the shared `app.log` file.
+The emitter is a simple standalone Java app that writes synthetic log lines into the shared log file.
 
 It:
 - writes regular INFO, WARN, and ERROR logs
@@ -28,7 +28,7 @@ It:
 
 Both apps read and write the same shared file:
 
-- the emitter appends new log lines to `app.log`
+- the emitter appends new log lines to log file
 - the aggregator tails that file and ingests the new lines
 - the aggregator groups logs into batches and updates metrics
 - if error volume spikes, the aggregator raises an anomaly event
@@ -64,7 +64,7 @@ cd log-emitter
 mvn exec:java
 ```
 
-The emitter writes to the shared `app.log` file in the parent directory.
+The emitter writes to the shared log file in the parent directory.
 
 How to test it
 1. Start the emitter first.
