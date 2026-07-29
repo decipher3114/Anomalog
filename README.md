@@ -2,36 +2,34 @@
 
 A Spring Boot log aggregation service that reads a shared log file, parses incoming entries, tracks log metrics, and detects error spikes in near real time.
 
-## What it does
+## What It Does
 
-The aggregator is designed to be the central processing service for a companion log emitter.
+The aggregator is the central processing service for a companion log emitter. It:
 
-It:
-- tails the shared log file
-- parses each log line into timestamp, level, and message
-- batches new log entries every second
-- tracks total log counts and counts per log level
-- detects error spikes using a sliding window of recent batches
-- publishes WebSocket events for processed batches, metrics snapshots, and anomalies
-- exposes REST endpoints for metrics and anomalies
+- Tails the shared log file
+- Parses each log line into a timestamp, level, and message
+- Batches new log entries every second
+- Tracks total log counts and counts per log level
+- Detects error spikes using a sliding window of recent batches
+- Publishes WebSocket events for processed batches, metrics snapshots, and anomalies
+- Exposes REST endpoints for metrics and anomalies
 
-## Companion emitter
+## Companion Emitter
 
-The emitter is a simple standalone Java app that writes synthetic log lines into the shared log file.
+The emitter is a standalone Java app that writes synthetic log lines into the shared log file. It:
 
-It:
-- writes regular INFO, WARN, and ERROR logs
-- occasionally emits a burst of ERROR logs
-- is meant to simulate a noisy application so the aggregator has real input to process
+- Writes regular INFO, WARN, and ERROR logs
+- Occasionally emits a burst of ERROR logs
+- Simulates a noisy application, giving the aggregator real input to process
 
-## How the pieces fit together
+## How the Pieces Fit Together
 
 Both apps read and write the same shared file:
 
-- the emitter appends new log lines to log file
-- the aggregator tails that file and ingests the new lines
-- the aggregator groups logs into batches and updates metrics
-- if error volume spikes, the aggregator raises an anomaly event
+- The emitter appends new log lines to the file
+- The aggregator tails the file and ingests new lines
+- The aggregator groups logs into batches and updates metrics
+- If error volume spikes, the aggregator raises an anomaly event
 
 ## Requirements
 
@@ -42,13 +40,15 @@ Both apps read and write the same shared file:
 
 Aggregator defaults are defined in `src/main/resources/application.properties`:
 
-- log source path: `../app.log`
-- polling interval: `200ms`
-- batch processing: every `1000ms`
-- anomaly window size: `5`
-- anomaly history size: `100`
+| Setting | Value |
+|---|---|
+| Log source path | `../app.log` |
+| Polling interval | 200ms |
+| Batch processing interval | 1000ms |
+| Anomaly window size | 5 |
+| Anomaly history size | 100 |
 
-## Running the aggregator
+## Running the Aggregator
 
 From the repo directory:
 
@@ -57,8 +57,10 @@ cd log-aggregator
 mvn spring-boot:run
 ```
 
-## Running the emitter
+## Running the Emitter
+
 From the repo directory:
+
 ```bash
 cd log-emitter
 mvn exec:java
@@ -66,25 +68,32 @@ mvn exec:java
 
 The emitter writes to the shared log file in the parent directory.
 
-How to test it
+## How to Test It
+
 1. Start the emitter first.
 2. Start the aggregator in a second terminal.
 3. Wait a few seconds for logs to accumulate.
 4. Check the REST endpoints:
-  - `GET http://localhost:8080/metrics`
-  - `GET http://localhost:8080/anomalies`
+   - `GET http://localhost:8080/metrics`
+   - `GET http://localhost:8080/anomalies`
 5. Connect a WebSocket client to:
-  - `ws://localhost:8080/ws/events`
+   - `ws://localhost:8080/ws/events`
 6. Watch for events such as:
-  - `BATCH_PROCESSED`
-  - `METRICS_SNAPSHOT`
-  - `ANOMALY_DETECTED`
+   - `BATCH_PROCESSED`
+   - `METRICS_SNAPSHOT`
+   - `ANOMALY_DETECTED`
 7. Let it run until an error spike occurs, then confirm an anomaly appears in `/anomalies`.
 
-# Notes
-The aggregator expects each log line to use the format:
+## Notes
+
+Each log line must follow this format:
+
 - ISO-8601 timestamp
-- log level
-- message
+- Log level
+- Message
+
 Example:
-- `2026-06-26T12:00:00Z ERROR Database timeout`
+
+```
+2026-06-26T12:00:00Z ERROR Database timeout
+```
