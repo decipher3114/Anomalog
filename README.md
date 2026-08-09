@@ -84,6 +84,10 @@ The emitter writes to the shared log file in the parent directory.
    - `ANOMALY_DETECTED`
 7. Let it run until an error spike occurs, then confirm an anomaly appears in `/anomalies`.
 
+## Video Guide
+
+[![Watch the video](https://img.youtube.com/vi/uZdcOELQVzw/maxresdefault.jpg)](https://youtu.be/uZdcOELQVzw)
+
 ## Notes
 
 Each log line must follow this format:
@@ -97,3 +101,4 @@ Example:
 ```
 2026-06-26T12:00:00Z ERROR Database timeout
 ```
+
