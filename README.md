@@ -1,4 +1,4 @@
-# Log Aggregator
+# Anomalog
 
 A Spring Boot log aggregation service that reads a shared log file, parses incoming entries, tracks log metrics, and detects error spikes in near real time.
 
@@ -16,10 +16,10 @@ The aggregator is the central processing service for a companion log emitter. It
 
 ## Companion Emitter
 
-The emitter is a standalone Java app that writes synthetic log lines into the shared log file. It:
+The emitter is a standalone Python script that writes synthetic log lines into the shared log file. It:
 
 - Writes regular INFO, WARN, and ERROR logs
-- Occasionally emits a burst of ERROR logs
+- Occasionally emits randomized bursts of ERROR logs
 - Simulates a noisy application, giving the aggregator real input to process
 
 ## How the Pieces Fit Together
@@ -35,6 +35,7 @@ Both apps read and write the same shared file:
 
 - Java 21
 - Maven 3.9 or newer
+- uv
 
 ## Configuration
 
@@ -53,7 +54,6 @@ Aggregator defaults are defined in `src/main/resources/application.properties`:
 From the repo directory:
 
 ```bash
-cd log-aggregator
 mvn spring-boot:run
 ```
 
@@ -62,11 +62,8 @@ mvn spring-boot:run
 From the repo directory:
 
 ```bash
-cd log-emitter
-mvn exec:java
+uv run scripts/emit.py app.log
 ```
-
-The emitter writes to the shared log file in the parent directory.
 
 ## How to Test It
 
@@ -85,8 +82,7 @@ The emitter writes to the shared log file in the parent directory.
 7. Let it run until an error spike occurs, then confirm an anomaly appears in `/anomalies`.
 
 ## Video Guide
-
-[![Watch the video](https://img.youtube.com/vi/uZdcOELQVzw/maxresdefault.jpg)](https://youtu.be/uZdcOELQVzw)
+[![Watch the Anomalog video guide](https://img.youtube.com/vi/uZdcOELQVzw/maxresdefault.jpg)](https://youtu.be/uZdcOELQVzw)
 
 ## Notes
 
@@ -98,7 +94,6 @@ Each log line must follow this format:
 
 Example:
 
-```
+```text
 2026-06-26T12:00:00Z ERROR Database timeout
 ```
-
